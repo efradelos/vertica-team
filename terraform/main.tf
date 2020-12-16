@@ -9,7 +9,8 @@ data "terraform_remote_state" "vpc" {
 }
 
 module "vertica_cluster" {
-  source = "git::https://github.com/efradelos/terraform-vertica-base.git"
+  source = "/Users/efradelos/projects/rga/base"
+  # source = "git::https://github.com/efradelos/terraform-vertica-base.git"
 
   aws_access_key = var.aws_access_key
   aws_secret_key = var.aws_secret_key
@@ -35,21 +36,17 @@ module "vertica_cluster" {
   # SSH key variables
   create_ssh_key_pair = false
   ssh_key_name        = "vertica-ssh-key"
-  ssh_key_path        = "secrets/key"
+  ssh_key_path        = "secrets/vertica_key"
 
   # Node variables
   node_ami           = "ami-083bcfe5f5bf588bd"
   node_instance_type = "c5.large"
   node_volume_size   = 50
 
-
   # Bastion variables
   bastion_ami           = "ami-083bcfe5f5bf588bd"
   bastion_instance_type = "c5.large"
   bastion_allocation_id = "eipalloc-0a4ef025603e58f23"
-
-  install_key         = "secrets/install.pub"
-  private_install_key = "secrets/install"
 
   create_lb = true
 }
