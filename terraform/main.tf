@@ -9,8 +9,7 @@ data "terraform_remote_state" "vpc" {
 }
 
 module "vertica_cluster" {
-  source = "/Users/efradelos/projects/rga/base"
-  # source = "git::https://github.com/efradelos/terraform-vertica-base.git"
+  source = "git::https://github.com/efradelos/terraform-vertica-base.git"
 
   aws_access_key = var.aws_access_key
   aws_secret_key = var.aws_secret_key
