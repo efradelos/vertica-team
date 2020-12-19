@@ -15,6 +15,7 @@ pipeline {
         TF_VAR_db_password = 'admin'
         TF_VAR_db_port = '5433'
         TF_VAR_db_communal_storage = 's3://kavala13-vertica/storage'
+        TF_VAR_ssh_key_path = credentials('ssh-public-key')
     }    
 
     stages {

@@ -7,3 +7,5 @@ variable "db_name" {}
 variable "db_port" {}
 variable "db_password" {}
 variable "db_communal_storage" {}
+
+variable "ssh_key_path" {}
