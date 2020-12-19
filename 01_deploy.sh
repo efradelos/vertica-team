@@ -1,4 +1,5 @@
 #!/bin/bash
 
 terraform init ./terraform
-echo "yes" | terraform apply ./terraform
+# echo "yes" | terraform apply ./terraform
+terraform plan ./terraform

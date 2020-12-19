@@ -1,3 +1,13 @@
+terraform {
+  backend "s3" {
+    bucket = "kavala13-terraform"
+    key    = "vertica-team-modeling"
+    region = "us-east-1"
+  }
+}
+
+provider "aws" {}
+
 data "terraform_remote_state" "vpc" {
   backend = "s3"
 
@@ -9,11 +19,7 @@ data "terraform_remote_state" "vpc" {
 }
 
 module "vertica_cluster" {
-  source = "git::https://github.com/efradelos/terraform-vertica-base.git"
-
-  aws_access_key = var.aws_access_key
-  aws_secret_key = var.aws_secret_key
-  aws_region     = var.aws_region
+  source = "github.com/efradelos/terraform-vertica-base?ref=v0.1.0"
 
   vpc_id            = data.terraform_remote_state.vpc.outputs.vpc_id
   public_subnet_id  = data.terraform_remote_state.vpc.outputs.public_subnets[0]
