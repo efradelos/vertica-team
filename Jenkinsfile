@@ -15,11 +15,8 @@ pipeline {
         stage('Configure') {
             steps {
                 sh '''
-                    echo 'Configuring....'
-                    pwd
                     ls -al
-                    cd "$WORKSPACE"
-                    ls -al
+                    terraform help
                 '''
             }
         }
