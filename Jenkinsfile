@@ -9,14 +9,14 @@ pipeline {
         }
         stage('Deploy') {
             steps {
+                sh 'export TEST_ENV=development'
                 echo 'Deploying..'
             }
         }
         stage('Configure') {
             steps {
                 sh '''
-                    ls -al
-                    terraform help
+                    echo "Maybe: $TEST_ENV"
                 '''
             }
         }
