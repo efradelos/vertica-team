@@ -35,14 +35,14 @@ pipeline {
                 sh './01_deploy.sh dev'
             }
         }
-        stage('Deploy to uat') {
+        stage('Deploy to uat...') {
             when { branch 'main' }
             steps {
                 echo 'Deploying..'
                 sh './01_deploy.sh uat'
             }
         }
-        stage('Deploy to prod') {
+        stage('Deploy to prod...') {
             when { tag pattern: "v\\d+\\.\\d+\\.\\d+", comparator: "REGEXP"}
             steps {
                 echo 'Deploying..'
