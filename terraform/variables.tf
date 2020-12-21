@@ -6,3 +6,5 @@ variable "db_user" {}
 variable "db_name" {}
 variable "db_port" {}
 variable "db_password" {}
+
+variable "ssh_key_path" {}

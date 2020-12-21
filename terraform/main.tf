@@ -35,7 +35,7 @@ module "vertica_cluster" {
   # SSH key variables
   create_ssh_key_pair = true
   ssh_key_name        = join("-", [local.prefix, "vertica-ssh-key"])
-  ssh_key_path        = "secrets/vertica_key.pub"
+  ssh_key_path        = var.ssh_key_path
 
   # Security Group
   create_security_group = true
