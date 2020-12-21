@@ -28,10 +28,25 @@ pipeline {
                 echo 'Testing..'
             }
         }
-        stage('Deploy') {
+        stage('Deploy to Dev') {
+            when { branch 'dev' }
             steps {
                 echo 'Deploying..'
-                sh './01_deploy.sh'
+                sh './01_deploy.sh dev'
+            }
+        }
+        stage('Deploy to uat') {
+            when { branch 'uat' }
+            steps {
+                echo 'Deploying..'
+                sh './01_deploy.sh uat'
+            }
+        }
+        stage('Deploy to prod') {
+            when { tag pattern: "v\\d+\\.\\d+\\.\\d+", comparator: "REGEXP"}
+            steps {
+                echo 'Deploying..'
+                sh './01_deploy.sh prod'
             }
         }
         stage('Configure') {

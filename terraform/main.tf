@@ -1,12 +1,19 @@
+locals {
+  prefix = terraform.workspace == "prod" ? "modeling" : join("-", ["modeling", terraform.workspace])
+}
+
 terraform {
   backend "s3" {
-    bucket = "kavala13-terraform"
-    key    = "vertica-team-modeling"
-    region = "us-east-1"
+    bucket               = "kavala13-terraform"
+    key                  = "terraform.tfstate"
+    region               = "us-east-1"
+    workspace_key_prefix = "modeling"
   }
 }
 
-provider "aws" {}
+provider "aws" {
+  region = "us-east-1"
+}
 
 data "terraform_remote_state" "vpc" {
   backend = "s3"
@@ -19,7 +26,7 @@ data "terraform_remote_state" "vpc" {
 }
 
 module "vertica_cluster" {
-  source = "github.com/efradelos/terraform-vertica-base?ref=v0.1.0"
+  source = "github.com/efradelos/terraform-vertica-base"
 
   vpc_id            = data.terraform_remote_state.vpc.outputs.vpc_id
   public_subnet_id  = data.terraform_remote_state.vpc.outputs.public_subnets[0]
@@ -27,12 +34,12 @@ module "vertica_cluster" {
 
   # SSH key variables
   create_ssh_key_pair = true
-  ssh_key_name        = "vertica-ssh-key"
-  ssh_key_path        = var.ssh_key_path
+  ssh_key_name        = join("-", [local.prefix, "vertica-ssh-key"])
+  ssh_key_path        = "secrets/vertica_key.pub"
 
   # Security Group
   create_security_group = true
-  security_group_name   = "vertica-node-sg"
+  security_group_name   = join("-", [local.prefix, "vertica-node-sg"])
 
   # Communal Storage
   create_communal_storage_bucket = true
@@ -40,13 +47,19 @@ module "vertica_cluster" {
 
   # Instance Profile 
   create_instance_profile = true
-  instance_profile_name   = "vertica-instance-profile"
+  instance_profile_name   = join("-", [local.prefix, "vertica-instance-profile"])
 
   # Management Console
-  create_mc = true
+  create_mc        = true
+  mc_name          = join("-", [local.prefix, "vertica-mc"])
+  mc_ami           = "ami-083bcfe5f5bf588bd"
+  mc_instance_type = "c5.large"
+  mc_username      = "mcadmin"
+  mc_password      = "change-me"
 
   # Node variables
   node_count         = 3
+  node_prefix        = join("-", [local.prefix, "vertica-node"])
   node_ami           = "ami-083bcfe5f5bf588bd"
   node_instance_type = "c5.large"
   node_volume_size   = 50
@@ -61,15 +74,15 @@ module "vertica_cluster" {
   db_eon_mode         = true
   db_license          = "CE"
   db_depot_path       = "/vertica/data"
-  db_communal_storage = var.db_communal_storage
+  db_communal_storage = "s3://kavala13-vertica/storage"
 
   # LB Variables
   create_lb = true
+  lb_name   = join("-", [local.prefix, "vertica-nodes-lb"])
 
-
-  # # Bastion variables
-  # bastion_ami           = "ami-083bcfe5f5bf588bd"
-  # bastion_instance_type = "c5.large"
-  # bastion_allocation_id = "eipalloc-0a4ef025603e58f23"
-
+  additional_tags = {
+    Environment = terraform.workspace
+    Team        = "modeling"
+    CostCenter  = "modeling-05233"
+  }
 }

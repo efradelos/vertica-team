@@ -1,7 +1,11 @@
 *.tfstate
 *.tfstate.backup
+*.tfbackend
+*.tfvars
 
-.terraform/
+.terraform*
+terraform.tfstate.d/
+
 secrets/
 reports/
-*.tfvars
+
