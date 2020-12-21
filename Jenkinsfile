@@ -29,7 +29,7 @@ pipeline {
             }
         }
         stage('Deploy to Dev') {
-            when { branch 'origin/dev' }
+            when { branch 'dev' }
             steps {
                 echo 'Deploying..'
                 sh './01_deploy.sh dev'
