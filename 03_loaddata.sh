@@ -8,7 +8,7 @@ done
 
 echo ''
 
-ssh -i ./secrets/vertica_key $VSQL_USER@$VSQL_HOST << EOF
+ssh -i ./terraform/secrets/vertica_key $VSQL_USER@$VSQL_HOST << EOF
     cd /opt/vertica/examples/VMart_Schema
     ./vmart_gen \
         --datadirectory /tmp/vmart_schema \

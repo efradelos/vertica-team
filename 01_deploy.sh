@@ -20,6 +20,6 @@ if [ "$yes" -ne 1 ]; then
 fi
 
 
-terraform init ./terraform
-terraform workspace select $VERTICA_ENV ./terraform
-echo "yes" | terraform apply ./terraform
+terraform -chdir=terraform init 
+terraform -chdir=terraform workspace select $VERTICA_ENV
+echo "yes" | terraform -chdir=terraform apply

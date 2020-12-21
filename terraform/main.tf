@@ -54,6 +54,7 @@ module "vertica_cluster" {
   mc_name          = join("-", [local.prefix, "vertica-mc"])
   mc_ami           = "ami-083bcfe5f5bf588bd"
   mc_instance_type = "c5.large"
+  mc_allocation_id = "eipalloc-0b0415df05800faca"
   mc_username      = "mcadmin"
   mc_password      = "change-me"
 
@@ -77,8 +78,9 @@ module "vertica_cluster" {
   db_communal_storage = "s3://kavala13-vertica/storage"
 
   # LB Variables
-  create_lb = true
-  lb_name   = join("-", [local.prefix, "vertica-nodes-lb"])
+  create_lb        = true
+  lb_name          = join("-", [local.prefix, "vertica-nodes-lb"])
+  lb_allocation_id = "eipalloc-08820e606aa305367"
 
   additional_tags = {
     Environment = terraform.workspace

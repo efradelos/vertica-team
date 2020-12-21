@@ -29,14 +29,14 @@ pipeline {
             }
         }
         stage('Deploy to Dev') {
-            when { branch 'deploy' }
+            when { branch 'dev' }
             steps {
                 echo 'Deploying..'
                 sh './01_deploy.sh dev'
             }
         }
         stage('Deploy to uat') {
-            when { branch 'uat' }
+            when { branch 'main' }
             steps {
                 echo 'Deploying..'
                 sh './01_deploy.sh uat'
