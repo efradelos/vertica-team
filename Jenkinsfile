@@ -10,43 +10,37 @@ pipeline {
         AWS_SECRET_ACCESS_KEY = credentials('jenkins-aws-secret-access-key')
         AWS_DEFAULT_REGION = 'us-east-1'
 
-        TF_VAR_cloud_backend_bucket = 'kavala13-terraform'
-        TF_VAR_cloud_backend_key = 'vertica-cloud'
-        TF_VAR_cloud_backend_region = 'us-east-1'
-
-        TF_VAR_db_user = 'dbadmin'
-        TF_VAR_db_name = 'db1'
-        TF_VAR_db_password = 'admin'
-        TF_VAR_db_port = '5433'
-        TF_VAR_db_communal_storage = 's3://kavala13-vertica/storage'
         TF_VAR_ssh_key_path = credentials('ssh-public-key')
+
     }    
+
 
     stages {
         stage('Test') {
             steps {
                 echo 'Testing..'
+
             }
         }
-        stage('Deploy to Dev') {
+        stage('Deploy to poc') {
             when { branch 'dev' }
             steps {
                 echo 'Deploying..'
-                sh './01_deploy.sh dev'
+                sh './01_deploy.sh poc'
             }
         }
-        stage('Deploy to uat...') {
+        stage('Deploy to sdlc...') {
             when { branch 'main' }
             steps {
                 echo 'Deploying..'
-                sh './01_deploy.sh uat'
+                sh './01_deploy.sh sdlc'
             }
         }
         stage('Deploy to prod...') {
             when { tag pattern: "v\\d+\\.\\d+\\.\\d+", comparator: "REGEXP"}
             steps {
                 echo 'Deploying..'
-                sh './01_deploy.sh prod'
+                sh './01_deploy.sh cust'
             }
         }
         stage('Configure') {

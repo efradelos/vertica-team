@@ -23,10 +23,11 @@ output "security_group_name" {
   value       = module.vertica_cluster.security_group_name
 }
 
-output "communal_storage_bucket" {
+output "db_communal_storage_location" {
   description = "Name of s3 bucket to hold communal data"
-  value       = module.vertica_cluster.communal_storage_bucket
+  value       = module.vertica_cluster.db_communal_storage_location
 }
+
 
 output "mc_id" {
   description = "Management Console id"
@@ -81,5 +82,5 @@ output "db_name" {
 
 output "db_port" {
   description = "Port of the database"
-  value       = var.db_port
+  value       = "5433"
 }

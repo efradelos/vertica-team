@@ -1,25 +1,26 @@
 #!/bin/bash
 
-available_envs=(dev uat prod)
-VERTICA_ENV="$1"
+source ./00_utils.sh
 
-yes=0
+checkEnv $1
 
-for w in ${available_envs[*]}
-do
-  if [ "$w" == "$VERTICA_ENV" ] 
-  then
-      yes=1
-      break
-  fi
-done;
-
-if [ "$yes" -ne 1 ]; then
-    echo "Error: invalid environment, exit now..."
-    exit -1
+if [ -z "$workspace" ]; then
+  echo "usage: 01_deploy <poc|sdlc|cust>"
+  exit -1
 fi
 
+if [ ! -f terraform/secrets/vertica_key ]; then
+  mkdir -p terraform/secrets
+  ssh-keygen -t rsa -b 2048 -f terraform/secrets/vertica_key -N "" -q
+fi
 
-terraform -chdir=terraform init 
-terraform -chdir=terraform workspace select $VERTICA_ENV
+terraform -chdir=terraform init
+
+if [[ "`terraform -chdir=terraform workspace list`" =~ "$workspace" ]]; then
+  terraform -chdir=terraform workspace select $workspace
+else 
+  terraform -chdir=terraform workspace new $workspace
+fi
+
+terraform -chdir=terraform workspace select $workspace
 echo "yes" | terraform -chdir=terraform apply

@@ -1,13 +1,14 @@
 #!/bin/bash
 
 echo -n 'Waiting for vertica cluster.'
-while ! nc -z $VSQL_HOST $VSQL_PORT -G 2; do 
+while ! nc -z $VSQL_HOST $VSQL_PORT; do 
     echo -n '.'
     sleep 2
 done
 
 echo ''
 
+ssh-keyscan $VSQL_HOST >> ~/.ssh/known_hosts
 ssh -i ./terraform/secrets/vertica_key $VSQL_USER@$VSQL_HOST << EOF
     cd /opt/vertica/examples/VMart_Schema
     ./vmart_gen \
