@@ -1,15 +1,10 @@
 locals {
-  prefix = terraform.workspace == "cust" ? var.team : join("-", [var.team, terraform.workspace])
+  mc_allocation_ids = { poc = "eipalloc-0b0415df05800faca", sdlc = "", cust = "" }
+  lb_allocation_ids = { poc = "eipalloc-08820e606aa305367", sdlc = "", cust = "" }
+  prefix            = terraform.workspace == "cust" ? var.team : join("-", [var.team, terraform.workspace])
 }
 
 terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 2.70"
-    }
-  }
-
   backend "s3" {
     bucket               = "kavala13-terraform"
     key                  = "terraform.tfstate"
@@ -33,13 +28,12 @@ data "terraform_remote_state" "vpc" {
 }
 
 module "vertica_cluster" {
-  source = "github.com/efradelos/vertica-base?ref=v0.2.0"
-
+  source            = "github.com/efradelos/vertica-base?ref=v0.3.0"
   vpc_id            = data.terraform_remote_state.vpc.outputs.vpc_id
   public_subnet_id  = data.terraform_remote_state.vpc.outputs.public_subnets[0]
   private_subnet_id = data.terraform_remote_state.vpc.outputs.private_subnets[0]
 
-  credentials_secret_name = "vertica/${var.team}/${terraform.workspace}"
+  credentials_secret_id = "vertica/${var.team}/${terraform.workspace}"
 
   # SSH key variables
   create_ssh_key = true
@@ -64,7 +58,7 @@ module "vertica_cluster" {
   mc_ami           = "ami-083bcfe5f5bf588bd"
   mc_instance_type = "c5.large"
   mc_username      = var.mc_username
-  # mc_allocation_id = "eipalloc-xxx"
+  mc_allocation_id = lookup(local.mc_allocation_ids, terraform.workspace)
 
   # Node variables
   node_count         = 3
@@ -77,17 +71,17 @@ module "vertica_cluster" {
   dba_user    = var.db_user
   db_data_dir = "/vertica/data"
 
+  # db_license_base64          = filebase64("license")  
   db_shard_count             = 6
   db_eon_mode                = true
-  db_license                 = "CE"
   db_depot_path              = "/vertica/data"
   db_communal_storage_bucket = "kavala13-vertica"
   db_communal_storage_key    = "data/${terraform.workspace}"
 
   # LB Variables
-  create_lb = true
-  lb_name   = join("-", [local.prefix, "vertica-nodes-lb"])
-  # lb_allocation_id = "eipalloc-xxx"
+  create_lb        = true
+  lb_name          = join("-", [local.prefix, "vertica-nodes-lb"])
+  lb_allocation_id = lookup(local.lb_allocation_ids, terraform.workspace)
 
   additional_tags = {
     Environment = terraform.workspace

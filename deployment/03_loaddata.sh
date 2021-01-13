@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo -n 'Waiting for vertica cluster.'
-while ! nc -z $VSQL_HOST $VSQL_PORT; do 
+while ! nc -z $VSQL_HOST $VSQL_PORT -G 2; do 
     echo -n '.'
     sleep 2
 done

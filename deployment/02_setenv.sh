@@ -1,5 +1,6 @@
 #!/bin/bash
-source ./00_utils.sh
+
+source ./deployment/00_utils.sh
 
 checkEnv $1
 

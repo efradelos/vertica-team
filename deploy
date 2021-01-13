@@ -1,0 +1,16 @@
+#!/bin/bash
+set -e
+
+source ./deployment/00_utils.sh
+
+checkEnv $1
+
+if [ -z "$workspace" ]; then
+  echo "usage: deploy <poc|sdlc|cust>"
+  exit -1
+fi
+
+source ./deployment/01_deploy.sh $workspace
+source ./deployment/02_setenv.sh $workspace >> /dev/null
+source ./deployment/03_loaddata.sh
+source ./deployment/04_report.sh
